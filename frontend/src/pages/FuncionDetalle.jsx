@@ -75,7 +75,7 @@ export default function FuncionDetalle() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="h-screen bg-slate-50 flex flex-col overflow-hidden">
       <PageHeader
         title={isEditing ? "Editar Función" : "Nueva Función"}
         description="Información de la función del sistema"
@@ -84,7 +84,7 @@ export default function FuncionDetalle() {
         saving={saving}
       />
       
-      <div className="p-8">
+      <div className="flex-1 overflow-y-auto p-8">
         <div className="max-w-4xl space-y-6">
           <FormCard title="Información básica" description="Datos principales de la función">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -16,13 +16,13 @@ export default function DiagramaSecuencia() {
   const [selected, setSelected] = useState(null);
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="h-screen bg-slate-50 flex flex-col overflow-hidden overflow-x-hidden">
       <PageHeader
         title="Diagrama de Secuencia"
         description="Editor visual UML — arrastra componentes al canvas para construir tu diagrama"
         icon={GitBranch}
       />
-      <div className="flex flex-1 min-h-0" style={{ height: "calc(100vh - 89px)" }}>
+      <div className="flex flex-1 min-h-0 overflow-hidden overflow-x-hidden">
         <SequencePalette />
         <SequenceCanvas
           actors={actors}

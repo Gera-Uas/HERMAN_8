@@ -276,7 +276,7 @@ export default function AnalisisDocumentosDetalle() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="h-screen bg-slate-50 flex flex-col overflow-hidden">
       <PageHeader
         title={isEditing ? "Editar análisis de documento" : "Nuevo análisis de documento"}
         description="Documenta el análisis de documentos del dominio"
@@ -285,7 +285,7 @@ export default function AnalisisDocumentosDetalle() {
         saving={saving}
       />
       
-      <div className="p-8">
+      <div className="flex-1 overflow-y-auto p-8">
         <TemplateTabs
           activeTab={activeTab}
           onTabChange={setActiveTab}

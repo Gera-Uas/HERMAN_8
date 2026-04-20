@@ -197,10 +197,10 @@ export default function SequenceCanvas({
     setEditTarget(null);
   };
 
-  const canvasWidth = Math.max(700,
-    actors.reduce((max, a) => Math.max(max, a.x + ACTOR_WIDTH + 40), 700),
-    fragments.reduce((max, f) => Math.max(max, f.x + f.width + 40), 700),
-    notes.reduce((max, n) => Math.max(max, n.x + (n.width || 160) + 40), 700),
+  const canvasWidth = Math.max(280,
+    actors.reduce((max, a) => Math.max(max, a.x + ACTOR_WIDTH + 40), 280),
+    fragments.reduce((max, f) => Math.max(max, f.x + f.width + 40), 280),
+    notes.reduce((max, n) => Math.max(max, n.x + (n.width || 160) + 40), 280),
   );
   const canvasHeight = Math.max(
     lifelineHeight + 60,
@@ -221,7 +221,7 @@ export default function SequenceCanvas({
         <div
           ref={canvasRef}
           className="relative bg-white rounded-2xl shadow-sm border border-slate-200 select-none"
-          style={{ width: canvasWidth, minHeight: canvasHeight, cursor: draggingActor ? "grabbing" : "default" }}
+          style={{ minWidth: '100%', minHeight: '100%', width: canvasWidth, height: canvasHeight, cursor: draggingActor ? "grabbing" : "default" }}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onMouseMove={handleMouseMove}
@@ -270,8 +270,8 @@ export default function SequenceCanvas({
             >
               <line
                 x1="1" y1="0" x2="1" y2={lifelineHeight}
-                stroke={pendingMessage ? "#6366f1" : "#cbd5e1"}
-                strokeWidth={pendingMessage ? 2 : 1.5}
+                stroke={pendingMessage && pendingMessage.from === actor.id ? "#6366f1" : "#cbd5e1"}
+                strokeWidth={pendingMessage && pendingMessage.from === actor.id ? 2 : 1.5}
                 strokeDasharray="6,4"
               />
             </svg>
@@ -300,8 +300,6 @@ export default function SequenceCanvas({
                 width: 32,
                 height: lifelineHeight,
                 zIndex: 5,
-                background: pendingMessage.from === actor.id ? "rgba(99,102,241,0.12)" : "rgba(99,102,241,0.04)",
-                borderLeft: `2px dashed ${pendingMessage.from === actor.id ? "#6366f1" : "transparent"}`,
               }}
               onClick={(e) => { e.stopPropagation(); handleLifelineClick(actor.id); }}
               title={pendingMessage.from ? "Clic para seleccionar destino" : "Clic para seleccionar origen"}

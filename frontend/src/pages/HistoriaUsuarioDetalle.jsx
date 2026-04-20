@@ -284,7 +284,7 @@ export default function HistoriaUsuarioDetalle() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="h-screen bg-slate-50 flex flex-col overflow-hidden">
       <PageHeader
         title={isEditing ? "Editar historia de usuario" : "Nueva historia de usuario"}
         description="Documenta historias de usuario del producto"
@@ -293,7 +293,7 @@ export default function HistoriaUsuarioDetalle() {
         saving={saving}
       />
       
-      <div className="p-8">
+      <div className="flex-1 overflow-y-auto p-8">
         <TemplateTabs
           activeTab={activeTab}
           onTabChange={setActiveTab}

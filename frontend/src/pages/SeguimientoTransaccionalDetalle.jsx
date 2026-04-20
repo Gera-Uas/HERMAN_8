@@ -418,7 +418,7 @@ export default function SeguimientoTransaccionalDetalle() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="h-screen bg-slate-50 flex flex-col overflow-hidden">
       <PageHeader
         title={isEditing ? "Editar seguimiento transaccional" : "Nuevo seguimiento transaccional"}
         description="Analiza logs y datos transaccionales del sistema"
@@ -427,7 +427,7 @@ export default function SeguimientoTransaccionalDetalle() {
         saving={saving}
       />
       
-      <div className="p-8">
+      <div className="flex-1 overflow-y-auto p-8">
         <TemplateTabs
           activeTab={activeTab}
           onTabChange={setActiveTab}

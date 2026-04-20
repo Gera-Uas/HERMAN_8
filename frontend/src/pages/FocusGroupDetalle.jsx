@@ -273,7 +273,7 @@ export default function FocusGroupDetalle() {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="h-screen bg-slate-50 flex flex-col overflow-hidden">
       <PageHeader
         title={isEditing ? "Editar focus group" : "Nuevo focus group"}
         description="Documenta sesiones de focus group realizadas"
@@ -282,7 +282,7 @@ export default function FocusGroupDetalle() {
         saving={saving}
       />
       
-      <div className="p-8">
+      <div className="flex-1 overflow-y-auto p-8">
         <TemplateTabs
           activeTab={activeTab}
           onTabChange={setActiveTab}

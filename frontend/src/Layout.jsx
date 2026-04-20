@@ -22,7 +22,9 @@ import {
   Cog,
   GitBranch,
   Package,
-  LayoutGrid
+  LayoutGrid,
+  Menu,
+  X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -87,6 +89,11 @@ const navigationItems = [
 export default function Layout({ children }) {
   const location = useLocation();
   const [expandedItems, setExpandedItems] = useState(["Recolección de datos"]);
+  const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarMinimized(!isSidebarMinimized);
+  };
 
   const toggleExpand = (name) => {
     setExpandedItems(prev =>
@@ -102,24 +109,38 @@ export default function Layout({ children }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="h-screen bg-slate-50 flex overflow-hidden">
       {/* Sidebar */}
-      <aside className="w-72 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 fixed h-full flex flex-col">
-        {/* Logo */}
-        <div className="p-6 border-b border-slate-700/50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+      <aside className={cn(
+        "bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 fixed h-full flex flex-col transition-all duration-300 ease-in-out z-50",
+        isSidebarMinimized ? "w-20" : "w-72"
+      )}>
+        {/* Logo/Header */}
+        <button
+          onClick={toggleSidebar}
+          className="p-6 border-b border-slate-700/50 hover:bg-slate-800/50 transition-colors duration-200 flex items-center justify-between"
+        >
+          <div className={cn(
+            "flex items-center gap-3 transition-all duration-300",
+            isSidebarMinimized ? "justify-center w-full" : ""
+          )}>
+            <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center flex-shrink-0">
               <Code2 className="w-6 h-6 text-white" />
             </div>
-            <div>
-              <h1 className="text-white font-semibold text-lg tracking-tight">DocuSDLC</h1>
-              <p className="text-slate-400 text-xs">Documentación de Software</p>
-            </div>
+            {!isSidebarMinimized && (
+              <div className="overflow-hidden">
+                <h1 className="text-white font-semibold text-lg tracking-tight whitespace-nowrap">DocuSDLC</h1>
+                <p className="text-slate-400 text-xs whitespace-nowrap">Documentación de Software</p>
+              </div>
+            )}
           </div>
-        </div>
+          {!isSidebarMinimized && (
+            <Menu className="w-5 h-5 text-slate-400 flex-shrink-0" />
+          )}
+        </button>
 
         {/* Navigation */}
-        <nav className="p-4 space-y-1 flex-1 overflow-y-auto min-h-0">
+        <nav className="p-4 space-y-1 flex-1 overflow-y-auto min-h-0 scrollbar-hidden-until-scroll">
           {navigationItems.map((item) => (
             <div key={item.name}>
               {item.children ? (
@@ -132,19 +153,24 @@ export default function Layout({ children }) {
                         ? "bg-slate-700/50 text-white"
                         : "text-slate-300 hover:bg-slate-700/30 hover:text-white"
                     )}
+                    title={isSidebarMinimized ? item.name : ""}
                   >
-                    <div className="flex items-center gap-3">
-                      <item.icon className="w-5 h-5" />
-                      <span>{item.name}</span>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <item.icon className="w-5 h-5 flex-shrink-0" />
+                      {!isSidebarMinimized && (
+                        <span className="truncate">{item.name}</span>
+                      )}
                     </div>
-                    {expandedItems.includes(item.name) ? (
-                      <ChevronDown className="w-4 h-4" />
-                    ) : (
-                      <ChevronRight className="w-4 h-4" />
+                    {!isSidebarMinimized && (
+                      expandedItems.includes(item.name) ? (
+                        <ChevronDown className="w-4 h-4 flex-shrink-0" />
+                      ) : (
+                        <ChevronRight className="w-4 h-4 flex-shrink-0" />
+                      )
                     )}
                   </button>
                   
-                  {expandedItems.includes(item.name) && (
+                  {!isSidebarMinimized && expandedItems.includes(item.name) && (
                     <div className="mt-1 ml-4 pl-4 border-l border-slate-700/50 space-y-1">
                       {item.children.map((child) => (
                         <Link
@@ -173,9 +199,12 @@ export default function Layout({ children }) {
                       ? "bg-indigo-500/20 text-indigo-400"
                       : "text-slate-300 hover:bg-slate-700/30 hover:text-white"
                   )}
+                  title={isSidebarMinimized ? item.name : ""}
                 >
-                  <item.icon className="w-5 h-5" />
-                  <span>{item.name}</span>
+                  <item.icon className="w-5 h-5 flex-shrink-0" />
+                  {!isSidebarMinimized && (
+                    <span className="truncate">{item.name}</span>
+                  )}
                 </Link>
               )}
             </div>
@@ -183,25 +212,28 @@ export default function Layout({ children }) {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-700/50 shrink-0">
-          <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800/50">
-            <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center text-white text-sm font-semibold">
-              P
+        {!isSidebarMinimized && (
+          <div className="p-4 border-t border-slate-700/50 shrink-0">
+            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800/50">
+              <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+                P
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-white font-medium truncate">Mi Proyecto</p>
+                <p className="text-xs text-slate-400">v1.0.0</p>
+              </div>
+              <Settings className="w-4 h-4 text-slate-400 hover:text-white cursor-pointer transition-colors flex-shrink-0" />
             </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm text-white font-medium truncate">Mi Proyecto</p>
-              <p className="text-xs text-slate-400">v1.0.0</p>
-            </div>
-            <Settings className="w-4 h-4 text-slate-400 hover:text-white cursor-pointer transition-colors" />
           </div>
-        </div>
+        )}
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 ml-72">
-        <div className="min-h-screen">
-          {children}
-        </div>
+      <main className={cn(
+        "flex-1 transition-all duration-300 ease-in-out overflow-hidden",
+        isSidebarMinimized ? "ml-20" : "ml-72"
+      )}>
+        {children}
       </main>
     </div>
   );
