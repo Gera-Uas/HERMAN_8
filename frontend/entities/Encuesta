@@ -1,0 +1,72 @@
+{
+  "name": "Encuesta",
+  "type": "object",
+  "properties": {
+    "titulo": {
+      "type": "string"
+    },
+    "objetivo": {
+      "type": "string"
+    },
+    "plataforma": {
+      "type": "string"
+    },
+    "fechaLanzamiento": {
+      "type": "string",
+      "format": "date"
+    },
+    "fechaCierre": {
+      "type": "string",
+      "format": "date"
+    },
+    "numeroRespuestas": {
+      "type": "number"
+    },
+    "urlEncuesta": {
+      "type": "string",
+      "format": "uri"
+    },
+    "resultadosFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "analisisResultados": {
+      "type": "string"
+    },
+    "hallazgos": {
+      "type": "string"
+    },
+    "recomendaciones": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "creada",
+        "abierta",
+        "cerrada",
+        "analizada"
+      ],
+      "default": "creada"
+    },
+    "stakeholderIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de los stakeholders relacionados con este registro."
+    },
+    "funcionIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de las funciones del sistema relacionadas con este registro."
+    }
+  },
+  "required": [
+    "titulo"
+  ]
+}

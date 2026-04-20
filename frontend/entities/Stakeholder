@@ -1,0 +1,38 @@
+{
+  "name": "Stakeholder",
+  "type": "object",
+  "properties": {
+    "nombre": {
+      "type": "string"
+    },
+    "rol": {
+      "type": "string"
+    },
+    "departamento": {
+      "type": "string"
+    },
+    "contacto": {
+      "type": "string",
+      "format": "email"
+    },
+    "prioridad": {
+      "type": "string",
+      "enum": [
+        "alta",
+        "media",
+        "baja"
+      ],
+      "default": "media"
+    },
+    "expectativas": {
+      "type": "string"
+    },
+    "influencia": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "nombre",
+    "rol"
+  ]
+}

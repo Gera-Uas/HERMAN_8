@@ -1,0 +1,76 @@
+{
+  "name": "HistoriaUsuario",
+  "type": "object",
+  "properties": {
+    "idHistoria": {
+      "type": "string"
+    },
+    "titulo": {
+      "type": "string"
+    },
+    "como": {
+      "type": "string"
+    },
+    "quiero": {
+      "type": "string"
+    },
+    "paraQue": {
+      "type": "string"
+    },
+    "criteriosAceptacion": {
+      "type": "string"
+    },
+    "prioridad": {
+      "type": "string",
+      "enum": [
+        "alta",
+        "media",
+        "baja"
+      ],
+      "default": "media"
+    },
+    "estimacion": {
+      "type": "string"
+    },
+    "prototiposFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "comentarios": {
+      "type": "string"
+    },
+    "dependencias": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "pendiente",
+        "en desarrollo",
+        "terminada",
+        "validada"
+      ],
+      "default": "pendiente"
+    },
+    "stakeholderIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de los stakeholders relacionados con este registro."
+    },
+    "funcionIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de las funciones del sistema relacionadas con este registro."
+    }
+  },
+  "required": [
+    "idHistoria",
+    "titulo"
+  ]
+}

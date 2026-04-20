@@ -1,0 +1,95 @@
+{
+  "name": "Entrevista",
+  "type": "object",
+  "properties": {
+    "tipoEntrevista": {
+      "type": "string",
+      "enum": [
+        "estructurada",
+        "semiestructurada",
+        "no-estructurada"
+      ]
+    },
+    "objetivo": {
+      "type": "string"
+    },
+    "fecha": {
+      "type": "string",
+      "format": "date"
+    },
+    "entrevistador": {
+      "type": "string"
+    },
+    "entrevistado": {
+      "type": "string"
+    },
+    "area": {
+      "type": "string"
+    },
+    "duracion": {
+      "type": "string"
+    },
+    "consentimiento": {
+      "type": "boolean",
+      "default": false
+    },
+    "transcripcion": {
+      "type": "string"
+    },
+    "audioFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "videoFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "resumen": {
+      "type": "string"
+    },
+    "hallazgos": {
+      "type": "string"
+    },
+    "requisitos": {
+      "type": "string"
+    },
+    "observaciones": {
+      "type": "string"
+    },
+    "riesgos": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "borrador",
+        "completo",
+        "analizado"
+      ],
+      "default": "borrador"
+    },
+    "stakeholderIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de los stakeholders relacionados con este registro."
+    },
+    "funcionIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de las funciones del sistema relacionadas con este registro."
+    }
+  },
+  "required": [
+    "entrevistado",
+    "objetivo",
+    "fecha"
+  ]
+}

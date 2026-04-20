@@ -1,0 +1,112 @@
+/**
+ * pages.config.js - Page routing configuration
+ * 
+ * This file is AUTO-GENERATED. Do not add imports or modify PAGES manually.
+ * Pages are auto-registered when you create files in the ./pages/ folder.
+ * 
+ * THE ONLY EDITABLE VALUE: mainPage
+ * This controls which page is the landing page (shown when users visit the app).
+ * 
+ * Example file structure:
+ * 
+ *   import HomePage from './pages/HomePage';
+ *   import Dashboard from './pages/Dashboard';
+ *   import Settings from './pages/Settings';
+ *   
+ *   export const PAGES = {
+ *       "HomePage": HomePage,
+ *       "Dashboard": Dashboard,
+ *       "Settings": Settings,
+ *   }
+ *   
+ *   export const pagesConfig = {
+ *       mainPage: "HomePage",
+ *       Pages: PAGES,
+ *   };
+ * 
+ * Example with Layout (wraps all pages):
+ *
+ *   import Home from './pages/Home';
+ *   import Settings from './pages/Settings';
+ *   import __Layout from './Layout.jsx';
+ *
+ *   export const PAGES = {
+ *       "Home": Home,
+ *       "Settings": Settings,
+ *   }
+ *
+ *   export const pagesConfig = {
+ *       mainPage: "Home",
+ *       Pages: PAGES,
+ *       Layout: __Layout,
+ *   };
+ *
+ * To change the main page from HomePage to Dashboard, use find_replace:
+ *   Old: mainPage: "HomePage",
+ *   New: mainPage: "Dashboard",
+ *
+ * The mainPage value must match a key in the PAGES object exactly.
+ */
+import AnalisisDocumentosDetalle from './pages/AnalisisDocumentosDetalle';
+import AnalisisDocumentosListado from './pages/AnalisisDocumentosListado';
+import Desarrollo from './pages/Desarrollo';
+import Despliegue from './pages/Despliegue';
+import Diseno from './pages/Diseno';
+import EncuestaDetalle from './pages/EncuestaDetalle';
+import EncuestasListado from './pages/EncuestasListado';
+import EntrevistasDetalle from './pages/EntrevistasDetalle';
+import EntrevistasListado from './pages/EntrevistasListado';
+import FocusGroupDetalle from './pages/FocusGroupDetalle';
+import FocusGroupListado from './pages/FocusGroupListado';
+import HistoriaUsuarioDetalle from './pages/HistoriaUsuarioDetalle';
+import HistoriasUsuarioListado from './pages/HistoriasUsuarioListado';
+import Home from './pages/Home';
+import Pruebas from './pages/Pruebas';
+import Requerimientos from './pages/Requerimientos';
+import SeguimientoTransaccionalDetalle from './pages/SeguimientoTransaccionalDetalle';
+import SeguimientoTransaccionalListado from './pages/SeguimientoTransaccionalListado';
+import StakeholdersListado from './pages/StakeholdersListado';
+import FuncionesListado from './pages/FuncionesListado';
+import StakeholderDetalle from './pages/StakeholderDetalle';
+import FuncionDetalle from './pages/FuncionDetalle';
+import DiagramaSecuencia from './pages/DiagramaSecuencia';
+import DiagramaCasosUso from './pages/DiagramaCasosUso';
+import DiagramaPaquetes from './pages/DiagramaPaquetes';
+import DiagramaClases from './pages/DiagramaClases';
+import __Layout from './Layout.jsx';
+
+
+export const PAGES = {
+    "AnalisisDocumentosDetalle": AnalisisDocumentosDetalle,
+    "AnalisisDocumentosListado": AnalisisDocumentosListado,
+    "Desarrollo": Desarrollo,
+    "Despliegue": Despliegue,
+    "Diseno": Diseno,
+    "EncuestaDetalle": EncuestaDetalle,
+    "EncuestasListado": EncuestasListado,
+    "EntrevistasDetalle": EntrevistasDetalle,
+    "EntrevistasListado": EntrevistasListado,
+    "FocusGroupDetalle": FocusGroupDetalle,
+    "FocusGroupListado": FocusGroupListado,
+    "HistoriaUsuarioDetalle": HistoriaUsuarioDetalle,
+    "HistoriasUsuarioListado": HistoriasUsuarioListado,
+    "Home": Home,
+    "Pruebas": Pruebas,
+    "Requerimientos": Requerimientos,
+    "SeguimientoTransaccionalDetalle": SeguimientoTransaccionalDetalle,
+    "SeguimientoTransaccionalListado": SeguimientoTransaccionalListado,
+    "StakeholdersListado": StakeholdersListado,
+    "FuncionesListado": FuncionesListado,
+    "StakeholderDetalle": StakeholderDetalle,
+    "FuncionDetalle": FuncionDetalle,
+    "DiagramaSecuencia": DiagramaSecuencia,
+    "DiagramaCasosUso": DiagramaCasosUso,
+    "DiagramaPaquetes": DiagramaPaquetes,
+    "DiagramaClases": DiagramaClases,
+}
+
+export const pagesConfig = {
+    mainPage: "Home",
+    Pages: PAGES,
+    Layout: __Layout,
+};

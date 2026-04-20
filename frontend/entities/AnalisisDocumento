@@ -1,0 +1,78 @@
+{
+  "name": "AnalisisDocumento",
+  "type": "object",
+  "properties": {
+    "tipoDocumento": {
+      "type": "string",
+      "enum": [
+        "manual",
+        "proceso",
+        "politica",
+        "reglamento",
+        "contrato",
+        "informe",
+        "especificacion",
+        "otro"
+      ]
+    },
+    "nombreDocumento": {
+      "type": "string"
+    },
+    "fuente": {
+      "type": "string"
+    },
+    "autor": {
+      "type": "string"
+    },
+    "fechaDocumento": {
+      "type": "string",
+      "format": "date"
+    },
+    "version": {
+      "type": "string"
+    },
+    "proposito": {
+      "type": "string"
+    },
+    "documentFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "extractos": {
+      "type": "string"
+    },
+    "requisitos": {
+      "type": "string"
+    },
+    "restricciones": {
+      "type": "string"
+    },
+    "suposiciones": {
+      "type": "string"
+    },
+    "riesgos": {
+      "type": "string"
+    },
+    "stakeholderIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de los stakeholders relacionados con este registro."
+    },
+    "funcionIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de las funciones del sistema relacionadas con este registro."
+    }
+  },
+  "required": [
+    "nombreDocumento",
+    "fuente",
+    "fechaDocumento"
+  ]
+}

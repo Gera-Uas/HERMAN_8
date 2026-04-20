@@ -1,0 +1,72 @@
+{
+  "name": "FocusGroup",
+  "type": "object",
+  "properties": {
+    "tema": {
+      "type": "string"
+    },
+    "objetivo": {
+      "type": "string"
+    },
+    "fecha": {
+      "type": "string",
+      "format": "date"
+    },
+    "horaInicio": {
+      "type": "string"
+    },
+    "horaFin": {
+      "type": "string"
+    },
+    "participantes": {
+      "type": "string"
+    },
+    "moderador": {
+      "type": "string"
+    },
+    "audioVideoFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "transcripcion": {
+      "type": "string"
+    },
+    "resumenDiscusiones": {
+      "type": "string"
+    },
+    "hallazgos": {
+      "type": "string"
+    },
+    "puntosConflicto": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "planificado",
+        "realizado",
+        "analizado"
+      ],
+      "default": "planificado"
+    },
+    "stakeholderIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de los stakeholders relacionados con este registro."
+    },
+    "funcionIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de las funciones del sistema relacionadas con este registro."
+    }
+  },
+  "required": [
+    "tema"
+  ]
+}

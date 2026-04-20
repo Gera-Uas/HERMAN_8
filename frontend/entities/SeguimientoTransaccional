@@ -1,0 +1,75 @@
+{
+  "name": "SeguimientoTransaccional",
+  "type": "object",
+  "properties": {
+    "sistema": {
+      "type": "string"
+    },
+    "tipoTransaccion": {
+      "type": "string",
+      "enum": [
+        "login",
+        "transaccion",
+        "crud",
+        "api",
+        "error",
+        "auditoria",
+        "otro"
+      ]
+    },
+    "periodoInicio": {
+      "type": "string",
+      "format": "date"
+    },
+    "periodoFin": {
+      "type": "string",
+      "format": "date"
+    },
+    "fuenteDatos": {
+      "type": "string"
+    },
+    "objetivo": {
+      "type": "string"
+    },
+    "dataFiles": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "patrones": {
+      "type": "string"
+    },
+    "frecuencias": {
+      "type": "string"
+    },
+    "cuellos": {
+      "type": "string"
+    },
+    "reglas": {
+      "type": "string"
+    },
+    "conclusiones": {
+      "type": "string"
+    },
+    "stakeholderIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de los stakeholders relacionados con este registro."
+    },
+    "funcionIds": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de las funciones del sistema relacionadas con este registro."
+    }
+  },
+  "required": [
+    "sistema",
+    "tipoTransaccion",
+    "periodoInicio"
+  ]
+}

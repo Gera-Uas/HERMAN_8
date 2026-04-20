@@ -1,0 +1,39 @@
+{
+  "name": "Funcion",
+  "type": "object",
+  "properties": {
+    "nombre": {
+      "type": "string"
+    },
+    "descripcion": {
+      "type": "string"
+    },
+    "tipo": {
+      "type": "string",
+      "enum": [
+        "funcional",
+        "no_funcional"
+      ],
+      "default": "funcional"
+    },
+    "modulo": {
+      "type": "string"
+    },
+    "prioridad": {
+      "type": "string",
+      "enum": [
+        "critica",
+        "alta",
+        "media",
+        "baja"
+      ],
+      "default": "media"
+    },
+    "dependencias": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "nombre"
+  ]
+}
