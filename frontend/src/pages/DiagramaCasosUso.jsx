@@ -1,25 +1,34 @@
-import React from "react";
-import { Users, Construction } from "lucide-react";
+import React, { useState } from "react";
+import { Users } from "lucide-react";
 import PageHeader from "@/components/shared/PageHeader";
+import UseCasePalette from "@/components/diagramas/casosUso/UseCasePalette";
+import UseCaseCanvas from "@/components/diagramas/casosUso/UseCaseCanvas";
 
 export default function DiagramaCasosUso() {
+  const [actors, setActors] = useState([
+    { id: "a1", name: "Usuario", description: "Usuario del sistema", x: 50, y: 150 },
+    { id: "a2", name: "Administrador", description: "Administrador del sistema", x: 600, y: 150 },
+  ]);
+  const [useCases, setUseCases] = useState([
+    { id: "uc1", name: "Iniciar sesión", description: "El usuario inicia sesión en el sistema", x: 250, y: 100, width: 120, height: 80 },
+    { id: "uc2", name: "Gestionar datos", description: "Administración de datos del sistema", x: 250, y: 220, width: 120, height: 80 },
+  ]);
+
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="h-screen bg-slate-50 flex flex-col overflow-hidden">
       <PageHeader
         title="Diagrama de Casos de Uso"
-        description="Representa las interacciones entre actores y el sistema"
+        description="Editor visual UML — arrastra elementos para construir tu diagrama"
         icon={Users}
       />
-      <div className="p-8">
-        <div className="flex flex-col items-center justify-center py-20">
-          <div className="w-20 h-20 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-3xl flex items-center justify-center mb-6">
-            <Construction className="w-10 h-10 text-emerald-500" />
-          </div>
-          <h2 className="text-2xl font-bold text-slate-800 mb-2">Sección en desarrollo</h2>
-          <p className="text-slate-500 text-center max-w-md">
-            Aquí podrás documentar los diagramas de casos de uso UML del sistema.
-          </p>
-        </div>
+      <div className="flex flex-1 min-h-0 overflow-hidden overflow-x-hidden">
+        <UseCasePalette />
+        <UseCaseCanvas
+          actors={actors}
+          setActors={setActors}
+          useCases={useCases}
+          setUseCases={setUseCases}
+        />
       </div>
     </div>
   );
