@@ -32,7 +32,7 @@ export default function EditModal({ target, onSave, onClose }) {
 
   return (
     <Dialog open={!!target} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md z-[9999]">
         <DialogHeader>
           <DialogTitle>
             {target.type === "element" && "Editar elemento"}

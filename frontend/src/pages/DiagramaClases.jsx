@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { LayoutGrid, ChevronLeft } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
 import PageHeader from "@/components/shared/PageHeader";
+import ClassPalette from "@/components/diagramas/clases/ClassPalette";
+import ClassCanvas from "@/components/diagramas/clases/ClassCanvas";
 import { Button } from "@/components/ui/button";
 
 const STORAGE_KEY = "class_diagrams";
@@ -39,12 +41,12 @@ export default function DiagramaClases() {
       setClasses([
         {
           id: "c1",
+          type: "class",
           name: "Clase 1",
-          description: "",
           x: 100,
           y: 100,
-          width: 150,
-          height: 120,
+          width: 180,
+          height: 150,
           attributes: [],
           methods: [],
         },
@@ -108,9 +110,15 @@ export default function DiagramaClases() {
         </Button>
       </PageHeader>
       <div className="flex flex-1 min-h-0 overflow-hidden">
-        <div className="flex-1 bg-slate-100 flex items-center justify-center">
-          <p className="text-slate-400">Editor de Diagrama de Clases (próximamente)</p>
-        </div>
+        <ClassPalette />
+        <ClassCanvas
+          classes={classes}
+          setClasses={setClasses}
+          relationships={relationships}
+          setRelationships={setRelationships}
+          selected={selected}
+          setSelected={setSelected}
+        />
       </div>
     </div>
   );
