@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 const titles = {
   actor: "Editar Actor",
   usecase: "Editar Caso de Uso",
+  association: "Editar Asociación",
 };
 
 export default function EditModal({ target, onSave, onClose }) {
@@ -80,6 +81,20 @@ export default function EditModal({ target, onSave, onClose }) {
                   onChange={(e) => setForm(p => ({ ...p, description: e.target.value }))}
                   placeholder="Describe la funcionalidad..."
                   className="min-h-[80px]"
+                />
+              </div>
+            </>
+          )}
+
+          {type === "association" && (
+            <>
+              <div className="space-y-1.5">
+                <Label>Etiqueta de la asociación</Label>
+                <Input
+                  value={form.label || ""}
+                  onChange={(e) => setForm(p => ({ ...p, label: e.target.value }))}
+                  placeholder="Ej: usa, participa en, realiza"
+                  autoFocus
                 />
               </div>
             </>

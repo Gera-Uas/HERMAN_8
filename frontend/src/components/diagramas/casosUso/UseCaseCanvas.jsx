@@ -1,11 +1,13 @@
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import ActorBox from "./ActorBox";
 import UseCaseBox from "./UseCaseBox";
+import AssociationLine from "./AssociationLine";
 import EditModal from "./EditModal";
+import UseCaseToolbar from "./UseCaseToolbar";
 
 const ACTOR_SIZE = 100;
 
-export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases }) {
+export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases, associations = [], setAssociations }) {
   const canvasRef = useRef(null);
   const scrollContainerRef = useRef(null);
   const [selected, setSelected] = useState(null);
@@ -15,6 +17,27 @@ export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases
   const [editTarget, setEditTarget] = useState(null);
   const [systemBoundary, setSystemBoundary] = useState({ x: 200, y: 100, width: 400, height: 300 });
   const [resizingSystemBoundary, setResizingSystemBoundary] = useState(false);
+  const [pendingAssociation, setPendingAssociation] = useState(null);
+
+  // ── CENTER SYSTEM BOUNDARY ────────────────────────────────────────────────
+  useEffect(() => {
+    const centerSystemBoundary = () => {
+      if (canvasRef.current) {
+        const canvasWidth = canvasRef.current.offsetWidth;
+        const centeredX = (canvasWidth - systemBoundary.width) / 2;
+        setSystemBoundary(prev => ({ ...prev, x: Math.max(20, centeredX) }));
+      }
+    };
+
+    const resizeObserver = new ResizeObserver(centerSystemBoundary);
+    if (canvasRef.current) {
+      resizeObserver.observe(canvasRef.current);
+    }
+
+    centerSystemBoundary();
+
+    return () => resizeObserver.disconnect();
+  }, [systemBoundary.width]);
 
   // ── DROP from palette ──────────────────────────────────────────────────────
   const handleDrop = useCallback((e) => {
@@ -29,6 +52,7 @@ export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases
     if (item.kind === "actor") {
       const newActor = {
         id: `actor-${Date.now()}`,
+        type: "actor",
         name: item.defaultName,
         description: "",
         x: Math.max(20, dropX - ACTOR_SIZE / 2),
@@ -41,6 +65,7 @@ export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases
     if (item.kind === "usecase") {
       const newUseCase = {
         id: `usecase-${Date.now()}`,
+        type: "usecase",
         name: item.defaultName,
         description: "",
         x: Math.max(20, dropX - 60),
@@ -51,7 +76,12 @@ export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases
       setUseCases(prev => [...prev, newUseCase]);
       setEditTarget({ type: "usecase", item: newUseCase, isNew: true });
     }
-  }, [setActors, setUseCases]);
+
+    if (item.kind === "association") {
+      if (actors.length === 0 && useCases.length === 0) return;
+      setPendingAssociation({ assocType: item.assocType || "association" });
+    }
+  }, [setActors, setUseCases, actors.length, useCases.length]);
 
   const handleDragOver = (e) => e.preventDefault();
 
@@ -122,13 +152,54 @@ export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases
     setResizingSystemBoundary(true);
   };
 
+  // ── HANDLE ELEMENT CLICK FOR ASSOCIATIONS ─────────────────────────────────
+  const handleElementClickForAssociation = (elementId) => {
+    if (!pendingAssociation) return;
+    
+    if (!pendingAssociation.from) {
+      // Seleccionar primer elemento
+      setPendingAssociation(prev => ({ ...prev, from: elementId }));
+      return;
+    }
+
+    // No permitir asociación con el mismo elemento
+    if (pendingAssociation.from === elementId) return;
+
+    // Crear la asociación
+    const newAssociation = {
+      id: `assoc-${Date.now()}`,
+      from: pendingAssociation.from,
+      to: elementId,
+      label: "Asociación",
+      type: pendingAssociation.assocType || "association",
+    };
+
+    if (setAssociations) {
+      setAssociations(prev => [...prev, newAssociation]);
+    }
+    setPendingAssociation(null);
+    setEditTarget({ type: "association", item: newAssociation });
+  };
+
   // ── DELETE ────────────────────────────────────────────────────────────────
   const deleteActor = (id) => {
     setActors(prev => prev.filter(a => a.id !== id));
+    if (setAssociations) {
+      setAssociations(prev => prev.filter(a => a.from !== id && a.to !== id));
+    }
     setSelected(null);
   };
   const deleteUseCase = (id) => {
     setUseCases(prev => prev.filter(u => u.id !== id));
+    if (setAssociations) {
+      setAssociations(prev => prev.filter(a => a.from !== id && a.to !== id));
+    }
+    setSelected(null);
+  };
+  const deleteAssociation = (id) => {
+    if (setAssociations) {
+      setAssociations(prev => prev.filter(a => a.id !== id));
+    }
     setSelected(null);
   };
 
@@ -136,6 +207,7 @@ export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases
   const handleSaveEdit = (updated) => {
     if (editTarget.type === "actor") setActors(prev => prev.map(a => a.id === updated.id ? updated : a));
     if (editTarget.type === "usecase") setUseCases(prev => prev.map(u => u.id === updated.id ? updated : u));
+    if (editTarget.type === "association" && setAssociations) setAssociations(prev => prev.map(a => a.id === updated.id ? updated : a));
     setEditTarget(null);
   };
 
@@ -148,6 +220,10 @@ export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases
 
   return (
     <div className="flex-1 flex flex-col overflow-hidden bg-slate-100">
+      <UseCaseToolbar
+        pendingAssociation={pendingAssociation}
+        onCancelPending={() => setPendingAssociation(null)}
+      />
       <div ref={scrollContainerRef} className="flex-1 overflow-auto p-6">
         <div
           ref={canvasRef}
@@ -195,12 +271,13 @@ export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases
               pointerEvents="none"
             />
             <text 
-              x="5" 
+              x={systemBoundary.width / 2} 
               y="20" 
               fontSize="12" 
               fill="#94a3b8" 
               fontWeight="bold"
               pointerEvents="none"
+              textAnchor="middle"
             >
               Sistema
             </text>
@@ -228,6 +305,21 @@ export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases
             />
           </svg>
 
+          {/* Associations */}
+          <svg style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 5 }}>
+            {associations.map(assoc => (
+              <AssociationLine
+                key={assoc.id}
+                association={assoc}
+                actors={actors}
+                useCases={useCases}
+                isSelected={selected === assoc.id}
+                onClick={(e) => { e.stopPropagation(); setSelected(assoc.id); }}
+                onDelete={() => deleteAssociation(assoc.id)}
+              />
+            ))}
+          </svg>
+
           {/* Actors */}
           {actors.map(actor => (
             <div key={actor.id} style={{ position: "relative", zIndex: 10 }}>
@@ -235,7 +327,14 @@ export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases
                 actor={actor}
                 isSelected={selected === actor.id}
                 isDragging={draggingActor === actor.id}
-                onClick={(e) => { e.stopPropagation(); setSelected(actor.id); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (pendingAssociation) {
+                    handleElementClickForAssociation(actor.id);
+                  } else {
+                    setSelected(actor.id);
+                  }
+                }}
                 onDoubleClick={() => setEditTarget({ type: "actor", item: actor })}
                 onDelete={() => deleteActor(actor.id)}
                 onMouseDown={(e) => handleActorMouseDown(e, actor)}
@@ -250,7 +349,14 @@ export default function UseCaseCanvas({ actors, setActors, useCases, setUseCases
                 useCase={useCase}
                 isSelected={selected === useCase.id}
                 isDragging={draggingUseCase === useCase.id}
-                onClick={(e) => { e.stopPropagation(); setSelected(useCase.id); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (pendingAssociation) {
+                    handleElementClickForAssociation(useCase.id);
+                  } else {
+                    setSelected(useCase.id);
+                  }
+                }}
                 onDoubleClick={() => setEditTarget({ type: "usecase", item: useCase })}
                 onDelete={() => deleteUseCase(useCase.id)}
                 onMouseDown={(e) => handleUseCaseMouseDown(e, useCase)}

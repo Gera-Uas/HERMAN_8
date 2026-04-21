@@ -24,6 +24,7 @@ const PALETTE_ITEMS = [
     icon: Zap,
     label: "Asociación",
     defaultName: "Asociación",
+    assocType: "association",
     description: "Conecta actores con casos de uso"
   }
 ];
