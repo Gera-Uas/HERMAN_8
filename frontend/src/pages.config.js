@@ -71,8 +71,12 @@ import StakeholderDetalle from './pages/StakeholderDetalle';
 import FuncionDetalle from './pages/FuncionDetalle';
 import DiagramaSecuencia from './pages/DiagramaSecuencia';
 import DiagramaCasosUso from './pages/DiagramaCasosUso';
+import DiagramasSecuencia from './pages/DiagramasSecuencia';
+import DiagramasCasosUso from './pages/DiagramasCasosUso';
 import DiagramaPaquetes from './pages/DiagramaPaquetes';
 import DiagramaClases from './pages/DiagramaClases';
+import DiagramasClases from './pages/DiagramasClases';
+import DiagramasPaquetes from './pages/DiagramasPaquetes';
 import __Layout from './Layout.jsx';
 
 
@@ -101,8 +105,12 @@ export const PAGES = {
     "FuncionDetalle": FuncionDetalle,
     "DiagramaSecuencia": DiagramaSecuencia,
     "DiagramaCasosUso": DiagramaCasosUso,
+    "DiagramasSecuencia": DiagramasSecuencia,
+    "DiagramasCasosUso": DiagramasCasosUso,
     "DiagramaPaquetes": DiagramaPaquetes,
     "DiagramaClases": DiagramaClases,
+    "DiagramasClases": DiagramasClases,
+    "DiagramasPaquetes": DiagramasPaquetes,
 }
 
 export const pagesConfig = {

@@ -8,7 +8,8 @@ export default function PageHeader({
   icon: Icon,
   onSave,
   onNew,
-  saving = false
+  saving = false,
+  children
 }) {
   return (
     <div className="bg-white border-b border-slate-200 px-8 py-6">
@@ -48,6 +49,7 @@ export default function PageHeader({
               {saving ? "Guardando..." : "Guardar"}
             </Button>
           )}
+          {children}
         </div>
       </div>
     </div>

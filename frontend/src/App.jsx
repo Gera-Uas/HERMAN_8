@@ -47,6 +47,41 @@ const AuthenticatedApp = () => {
           <MainPage />
         </LayoutWrapper>
       } />
+      
+      {/* Dynamic routes for diagram editors */}
+      <Route
+        path="/diagrama-secuencia-editor/:id"
+        element={
+          <LayoutWrapper currentPageName="DiagramaSecuencia">
+            <Pages.DiagramaSecuencia />
+          </LayoutWrapper>
+        }
+      />
+      <Route
+        path="/diagrama-casos-uso-editor/:id"
+        element={
+          <LayoutWrapper currentPageName="DiagramaCasosUso">
+            <Pages.DiagramaCasosUso />
+          </LayoutWrapper>
+        }
+      />
+      <Route
+        path="/diagrama-clases-editor/:id"
+        element={
+          <LayoutWrapper currentPageName="DiagramaClases">
+            <Pages.DiagramaClases />
+          </LayoutWrapper>
+        }
+      />
+      <Route
+        path="/diagrama-paquetes-editor/:id"
+        element={
+          <LayoutWrapper currentPageName="DiagramaPaquetes">
+            <Pages.DiagramaPaquetes />
+          </LayoutWrapper>
+        }
+      />
+
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}

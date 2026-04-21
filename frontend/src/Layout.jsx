@@ -63,10 +63,10 @@ const navigationItems = [
     name: "Diagramas",
     icon: Layers,
     children: [
-      { name: "Secuencia", icon: GitBranch, page: "DiagramaSecuencia" },
-      { name: "Casos de uso", icon: Users, page: "DiagramaCasosUso" },
-      { name: "Paquetes", icon: Package, page: "DiagramaPaquetes" },
-      { name: "Clases", icon: LayoutGrid, page: "DiagramaClases" }
+      { name: "Secuencia", icon: GitBranch, page: "DiagramasSecuencia" },
+      { name: "Casos de uso", icon: Users, page: "DiagramasCasosUso" },
+      { name: "Paquetes", icon: Package, page: "DiagramasPaquetes" },
+      { name: "Clases", icon: LayoutGrid, page: "DiagramasClases" }
     ]
   },
   {

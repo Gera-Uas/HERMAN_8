@@ -1,0 +1,97 @@
+import React from "react";
+import { Package, Code2, Box, Share2, StickyNote, Link2 } from "lucide-react";
+
+const paletteItems = [
+  { type: "package", label: "Paquete", icon: Package, defaultName: "Paquete" },
+  { type: "interface", label: "Interfaz", icon: Code2, defaultName: "Interfaz" },
+  { type: "class", label: "Clase", icon: Box, defaultName: "Clase" },
+];
+
+const relationshipItems = [
+  { relType: "dependency", label: "Dependencia", color: "bg-indigo-500" },
+  { relType: "import", label: "Importa", color: "bg-purple-500" },
+  { relType: "implements", label: "Implementa", color: "bg-emerald-500" },
+];
+
+const otherItems = [
+  { kind: "note", label: "Nota", icon: StickyNote, color: "bg-yellow-400" },
+];
+
+export default function PackagePalette() {
+  const handleDragStart = (e, item) => {
+    e.dataTransfer.setData("application/palette-item", JSON.stringify(item));
+  };
+
+  return (
+    <aside className="w-60 bg-white border-r border-slate-200 flex flex-col shrink-0">
+      {/* Contenedor scrollable */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden">
+        {/* Elementos */}
+        <div className="p-4 border-b border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Elementos</p>
+        </div>
+        <div className="p-3 space-y-2">
+          {paletteItems.map((item) => (
+            <div
+              key={item.type}
+              draggable
+              onDragStart={(e) => handleDragStart(e, { kind: "element", ...item })}
+              className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 cursor-grab active:cursor-grabbing transition-all select-none"
+            >
+              <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center shrink-0">
+                <item.icon className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-medium text-slate-700">{item.label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Relaciones */}
+        <div className="p-4 border-t border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Relaciones</p>
+        </div>
+        <div className="p-3 space-y-2">
+          {relationshipItems.map((item) => (
+            <div
+              key={item.relType}
+              draggable
+              onDragStart={(e) => handleDragStart(e, { kind: "relationship", ...item })}
+              className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-indigo-50 hover:border-indigo-200 cursor-grab active:cursor-grabbing transition-all select-none"
+            >
+              <div className={`w-8 h-8 ${item.color} rounded-lg flex items-center justify-center shrink-0`}>
+                <Link2 className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-medium text-slate-700">{item.label}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Otros */}
+        <div className="p-4 border-t border-slate-100">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Otros</p>
+        </div>
+        <div className="p-3 space-y-2">
+          {otherItems.map((item) => (
+            <div
+              key={item.kind}
+              draggable
+              onDragStart={(e) => handleDragStart(e, { kind: item.kind, ...item })}
+              className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 bg-slate-50 hover:bg-yellow-50 hover:border-yellow-300 cursor-grab active:cursor-grabbing transition-all select-none"
+            >
+              <div className={`w-8 h-8 ${item.color} rounded-lg flex items-center justify-center shrink-0`}>
+                <item.icon className="w-4 h-4 text-white" />
+              </div>
+              <span className="text-sm font-medium text-slate-700">{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="p-4 border-t border-slate-100 bg-slate-50 shrink-0">
+        <p className="text-xs text-slate-400 leading-relaxed">
+          Arrastra elementos al canvas. Doble clic para editar. Clic para seleccionar.
+        </p>
+      </div>
+    </aside>
+  );
+}
