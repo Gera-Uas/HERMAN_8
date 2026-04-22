@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "./utils";
+import { useProjects } from "@/lib/ProjectContext";
 import {
   ChevronDown,
   ChevronRight,
@@ -88,7 +89,9 @@ const navigationItems = [
 
 export default function Layout({ children }) {
   const location = useLocation();
-  const [expandedItems, setExpandedItems] = useState(["Recolección de datos"]);
+  const navigate = useNavigate();
+  const { currentProject } = useProjects();
+  const [expandedItems, setExpandedItems] = useState([]);
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
 
   const toggleSidebar = () => {
@@ -216,13 +219,21 @@ export default function Layout({ children }) {
           <div className="p-4 border-t border-slate-700/50 shrink-0">
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800/50">
               <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
-                P
+                {currentProject?.name?.charAt(0).toUpperCase() || 'P'}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-white font-medium truncate">Mi Proyecto</p>
-                <p className="text-xs text-slate-400">v1.0.0</p>
+                <p className="text-sm text-white font-medium truncate">{currentProject?.name || 'Mi Proyecto'}</p>
+                <p className="text-xs text-slate-400">{currentProject?.status || 'v1.0.0'}</p>
               </div>
-              <Settings className="w-4 h-4 text-slate-400 hover:text-white cursor-pointer transition-colors flex-shrink-0" />
+              <button
+                onClick={() => navigate(createPageUrl('ProjectsList'))}
+                className="group relative"
+              >
+                <Settings className="w-4 h-4 text-slate-400 hover:text-white cursor-pointer transition-colors flex-shrink-0" />
+                <span className="absolute bottom-full right-0 mb-2 px-2 py-1 bg-slate-700 text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                  Gestionar proyectos
+                </span>
+              </button>
             </div>
           </div>
         )}

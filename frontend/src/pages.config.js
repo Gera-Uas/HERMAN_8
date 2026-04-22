@@ -61,6 +61,7 @@ import FocusGroupListado from './pages/FocusGroupListado';
 import HistoriaUsuarioDetalle from './pages/HistoriaUsuarioDetalle';
 import HistoriasUsuarioListado from './pages/HistoriasUsuarioListado';
 import Home from './pages/Home';
+import ProjectsList from './pages/ProjectsList';
 import Pruebas from './pages/Pruebas';
 import Requerimientos from './pages/Requerimientos';
 import SeguimientoTransaccionalDetalle from './pages/SeguimientoTransaccionalDetalle';
@@ -111,6 +112,7 @@ export const PAGES = {
     "DiagramaClases": DiagramaClases,
     "DiagramasClases": DiagramasClases,
     "DiagramasPaquetes": DiagramasPaquetes,
+    "ProjectsList": ProjectsList,
 }
 
 export const pagesConfig = {
