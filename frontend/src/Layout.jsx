@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { useProjects } from "@/lib/ProjectContext";
+import { useAuth } from "@/lib/AuthContext";
 import {
   ChevronDown,
   ChevronRight,
@@ -25,7 +26,7 @@ import {
   Package,
   LayoutGrid,
   Menu,
-  X
+  LogOut
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -91,8 +92,12 @@ export default function Layout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { currentProject } = useProjects();
+  const { logout, user } = useAuth();
   const [expandedItems, setExpandedItems] = useState([]);
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
+
+  // Hide sidebar on ProjectsList page
+  const isProjectsListPage = location.pathname === '/ProjectsList';
 
   const toggleSidebar = () => {
     setIsSidebarMinimized(!isSidebarMinimized);
@@ -114,10 +119,11 @@ export default function Layout({ children }) {
   return (
     <div className="h-screen bg-slate-50 flex overflow-hidden">
       {/* Sidebar */}
-      <aside className={cn(
-        "bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 fixed h-full flex flex-col transition-all duration-300 ease-in-out z-50",
-        isSidebarMinimized ? "w-20" : "w-72"
-      )}>
+      {!isProjectsListPage && (
+        <aside className={cn(
+          "bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 fixed h-full flex flex-col transition-all duration-300 ease-in-out z-50",
+          isSidebarMinimized ? "w-20" : "w-72"
+        )}>
         {/* Logo/Header */}
         <button
           onClick={toggleSidebar}
@@ -216,7 +222,7 @@ export default function Layout({ children }) {
 
         {/* Footer */}
         {!isSidebarMinimized && (
-          <div className="p-4 border-t border-slate-700/50 shrink-0">
+          <div className="p-4 border-t border-slate-700/50 shrink-0 space-y-3">
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800/50">
               <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
                 {currentProject?.name?.charAt(0).toUpperCase() || 'P'}
@@ -235,14 +241,26 @@ export default function Layout({ children }) {
                 </span>
               </button>
             </div>
+
+            {/* Logout Button */}
+            <button
+              onClick={() => logout(true)}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 group"
+              title="Cerrar sesión"
+            >
+              <LogOut className="w-5 h-5 flex-shrink-0" />
+              <span>Cerrar sesión</span>
+              <span className="text-xs text-slate-500 ml-auto">{user?.email}</span>
+            </button>
           </div>
         )}
-      </aside>
+        </aside>
+      )}
 
       {/* Main Content */}
       <main className={cn(
         "flex-1 transition-all duration-300 ease-in-out overflow-hidden",
-        isSidebarMinimized ? "ml-20" : "ml-72"
+        isProjectsListPage ? "ml-0" : (isSidebarMinimized ? "ml-20" : "ml-72")
       )}>
         {children}
       </main>

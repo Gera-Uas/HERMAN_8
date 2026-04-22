@@ -11,6 +11,7 @@ import encuestasRouter from './routes/encuestas.js';
 import entrevistasRouter from './routes/entrevistas.js';
 import focusGroupsRouter from './routes/focus-groups.js';
 import seguimientosRouter from './routes/seguimientos-transaccionales.js';
+import authRouter from './routes/auth.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -23,6 +24,7 @@ app.use(express.json());
 initializeDatabase();
 
 // Routes
+app.use('/api/auth', authRouter);
 app.use('/api/entities/Stakeholder', stakeholdersRouter);
 app.use('/api/entities/Funcion', funcionesRouter);
 app.use('/api/entities/HistoriaUsuario', historiasRouter);
