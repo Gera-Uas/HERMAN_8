@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { entities } from "@/api/entities";
 import PageHeader from "@/components/shared/PageHeader";
 import PackageDiagramTable from "@/components/diagramas/paquetes/PackageDiagramTable";
 import DiagramCreateEditModal from "@/components/diagramas/DiagramCreateEditModal";
@@ -40,21 +41,34 @@ export default function DiagramasPaquetes() {
     setShowModal(true);
   };
 
-  const handleSaveModal = (formData) => {
+  const handleSaveModal = async (formData) => {
     if (modalTarget) {
+      const updatedDiagram = {
+        ...modalTarget,
+        ...formData,
+        updatedAt: new Date().toISOString(),
+      };
       // Edit existing
       setDiagrams(prev =>
         prev.map(d =>
           d.id === modalTarget.id
-            ? { ...d, ...formData, updatedAt: new Date().toISOString() }
+            ? updatedDiagram
             : d
         )
       );
+      await entities.Diagrama.update(modalTarget.id, {
+        id: modalTarget.id,
+        tipo: "package",
+        nombre: updatedDiagram.name,
+        descripcion: updatedDiagram.description || "",
+        funcionId: updatedDiagram.funcionId || ""
+      });
       setShowModal(false);
     } else {
       // Create new
+      const diagramId = `pkg-${Date.now()}`;
       const newDiagram = {
-        id: `pkg-${Date.now()}`,
+        id: diagramId,
         ...formData,
         packages: [
           {
@@ -74,6 +88,13 @@ export default function DiagramasPaquetes() {
         updatedAt: new Date().toISOString(),
       };
       setDiagrams(prev => [...prev, newDiagram]);
+      await entities.Diagrama.create({
+        id: diagramId,
+        tipo: "package",
+        nombre: newDiagram.name,
+        descripcion: newDiagram.description || "",
+        funcionId: newDiagram.funcionId || ""
+      });
       // Navegar automáticamente al nuevo diagrama
       setTimeout(() => {
         navigate(`/diagrama-paquetes-editor/${newDiagram.id}`);
@@ -94,6 +115,7 @@ export default function DiagramasPaquetes() {
   const handleDelete = (diagramId) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este diagrama?")) {
       setDiagrams(prev => prev.filter(d => d.id !== diagramId));
+      void entities.Diagrama.delete(diagramId);
     }
   };
 

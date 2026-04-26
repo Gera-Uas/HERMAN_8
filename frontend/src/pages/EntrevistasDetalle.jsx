@@ -73,15 +73,15 @@ export default function EntrevistasDetalle() {
     if (entrevista) {
       setFormData({
         tipoEntrevista: entrevista.tipoEntrevista || "",
-        objetivo: entrevista.objetivo || "",
+        objetivo: entrevista.objetivo || entrevista.descripcion || "",
         fecha: entrevista.fecha || "",
         entrevistador: entrevista.entrevistador || "",
-        entrevistado: entrevista.entrevistado || "",
+        entrevistado: entrevista.entrevistado || entrevista.titulo || "",
         area: entrevista.area || "",
         duracion: entrevista.duracion || "",
         consentimiento: entrevista.consentimiento || false,
         estado: entrevista.estado || "borrador",
-        stakeholderIds: entrevista.stakeholderIds || [],
+        stakeholderIds: entrevista.stakeholderIds || (entrevista.stakeholderId ? [entrevista.stakeholderId] : []),
         funcionIds: entrevista.funcionIds || []
       });
       setTranscripcion(entrevista.transcripcion || "");
@@ -121,6 +121,9 @@ export default function EntrevistasDetalle() {
     setSaving(true);
     const dataToSave = {
       ...formData,
+      titulo: formData.entrevistado || formData.tipoEntrevista || "Entrevista",
+      descripcion: formData.objetivo || "",
+      stakeholderId: formData.stakeholderIds?.[0] || null,
       transcripcion,
       ...conclusiones
     };

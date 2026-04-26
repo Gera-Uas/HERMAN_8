@@ -64,6 +64,10 @@ import Home from './pages/Home';
 import ProjectsList from './pages/ProjectsList';
 import Pruebas from './pages/Pruebas';
 import Requerimientos from './pages/Requerimientos';
+import ModulosListado from './pages/ModulosListado';
+import ModuloDetalle from './pages/ModuloDetalle';
+import RolesListado from './pages/RolesListado';
+import RoleDetalle from './pages/RoleDetalle';
 import SeguimientoTransaccionalDetalle from './pages/SeguimientoTransaccionalDetalle';
 import SeguimientoTransaccionalListado from './pages/SeguimientoTransaccionalListado';
 import StakeholdersListado from './pages/StakeholdersListado';
@@ -96,6 +100,10 @@ export const PAGES = {
     "HistoriaUsuarioDetalle": HistoriaUsuarioDetalle,
     "HistoriasUsuarioListado": HistoriasUsuarioListado,
     "Home": Home,
+    "ModulosListado": ModulosListado,
+    "ModuloDetalle": ModuloDetalle,
+    "RolesListado": RolesListado,
+    "RoleDetalle": RoleDetalle,
     "Pruebas": Pruebas,
     "Requerimientos": Requerimientos,
     "SeguimientoTransaccionalDetalle": SeguimientoTransaccionalDetalle,

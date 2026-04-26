@@ -15,11 +15,29 @@ import {
   Sparkles,
   ClipboardCheck,
   MessageSquare,
-  BookOpen
+  BookOpen,
+  Settings,
+  UserCog,
+  Cog,
+  GitBranch,
+  Package,
+  LayoutGrid
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 const phases = [
+  {
+    name: "Gestión del Proyecto",
+    description: "Organización, seguimiento y control de los roles del proyecto",
+    icon: Settings,
+    color: "from-slate-700 to-slate-900",
+    shadowColor: "shadow-slate-500/25",
+    items: [
+      { name: "Módulos", icon: Package, page: "ModulosListado" },
+      { name: "Funciones", icon: Cog, page: "FuncionesListado" },
+      { name: "Stakeholders", icon: UserCog, page: "StakeholdersListado" }
+    ]
+  },
   {
     name: "Recolección de datos",
     description: "Técnicas y herramientas para capturar información del dominio",
@@ -33,6 +51,19 @@ const phases = [
       { name: "Historias de Usuario", icon: BookOpen, page: "HistoriasUsuarioListado" },
       { name: "Análisis de documentos", icon: FileSearch, page: "AnalisisDocumentosListado" },
       { name: "Seguimiento transaccional", icon: Activity, page: "SeguimientoTransaccionalListado" }
+    ]
+  },
+  {
+    name: "Diagramas",
+    description: "Modelado visual de procesos, comportamiento y estructura",
+    icon: Layers,
+    color: "from-emerald-500 to-teal-600",
+    shadowColor: "shadow-emerald-500/25",
+    items: [
+      { name: "Secuencia", icon: GitBranch, page: "DiagramasSecuencia" },
+      { name: "Casos de uso", icon: Users, page: "DiagramasCasosUso" },
+      { name: "Paquetes", icon: Package, page: "DiagramasPaquetes" },
+      { name: "Clases", icon: LayoutGrid, page: "DiagramasClases" }
     ]
   },
   {
@@ -79,9 +110,9 @@ const phases = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex flex-col">
       {/* Hero Section */}
-      <div className="px-8 py-12 border-b border-slate-200 bg-white">
+      <div className="px-8 py-12 border-b border-slate-200 bg-white flex-shrink-0">
         <div className="max-w-4xl">
           <div className="flex items-center gap-2 text-indigo-600 mb-4">
             <Sparkles className="w-5 h-5" />
@@ -98,7 +129,7 @@ export default function Home() {
       </div>
 
       {/* Phases Grid */}
-      <div className="p-8">
+      <div className="p-8 flex-1">
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {phases.map((phase) => (
             <Card 

@@ -1,6 +1,8 @@
 import React from "react";
 import { Edit2, Trash2, Eye, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useQuery } from "@tanstack/react-query";
+import { entities } from "@/api/entities";
 
 export default function PackageDiagramTable({
   diagrams,
@@ -10,6 +12,13 @@ export default function PackageDiagramTable({
   onCreateNew
 }) {
   const formatDate = (date) => new Date(date).toLocaleDateString("es-ES");
+
+  const { data: funciones = [] } = useQuery({
+    queryKey: ["funciones"],
+    queryFn: () => entities.Funcion.list()
+  });
+
+  const getFuncionName = (funcionId) => funciones.find((funcion) => funcion.id === funcionId)?.nombre || "-";
 
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
@@ -50,6 +59,9 @@ export default function PackageDiagramTable({
                   Descripción
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                  Función vinculada
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Paquetes
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
@@ -76,6 +88,9 @@ export default function PackageDiagramTable({
                     <p className="text-sm text-slate-600 line-clamp-1">
                       {diagram.description || "-"}
                     </p>
+                  </td>
+                  <td className="px-6 py-4">
+                    <p className="text-sm text-slate-600">{getFuncionName(diagram.funcionId)}</p>
                   </td>
                   <td className="px-6 py-4">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">

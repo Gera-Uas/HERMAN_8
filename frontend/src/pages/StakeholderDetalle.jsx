@@ -6,7 +6,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createPageUrl } from "@/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import PageHeader from "@/components/shared/PageHeader";
 import FormCard from "@/components/shared/FormCard";
@@ -23,9 +22,7 @@ export default function StakeholderDetalle() {
     rol: "",
     departamento: "",
     contacto: "",
-    prioridad: "media",
-    expectativas: "",
-    influencia: ""
+    funcionId: ""
   });
   const [saving, setSaving] = useState(false);
 
@@ -38,19 +35,28 @@ export default function StakeholderDetalle() {
     enabled: isEditing
   });
 
+  const { data: roles = [] } = useQuery({
+    queryKey: ['roles'],
+    queryFn: () => entities.Role.list()
+  });
+
+  const { data: funciones = [] } = useQuery({
+    queryKey: ['funciones'],
+    queryFn: () => entities.Funcion.list()
+  });
+
   useEffect(() => {
     if (stakeholder) {
+      const funcionVinculada = funciones.find((funcion) => funcion.responsableId === stakeholderId);
       setFormData({
         nombre: stakeholder.nombre || "",
         rol: stakeholder.rol || "",
         departamento: stakeholder.departamento || "",
         contacto: stakeholder.contacto || "",
-        prioridad: stakeholder.prioridad || "media",
-        expectativas: stakeholder.expectativas || "",
-        influencia: stakeholder.influencia || ""
+        funcionId: funcionVinculada?.id || stakeholder.funcionId || ""
       });
     }
-  }, [stakeholder]);
+  }, [stakeholder, funciones, stakeholderId]);
 
   const saveMutation = useMutation({
     mutationFn: async (data) => {
@@ -62,7 +68,6 @@ export default function StakeholderDetalle() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['stakeholders'] });
-      navigate(createPageUrl("StakeholdersListado"));
     }
   });
 
@@ -72,8 +77,40 @@ export default function StakeholderDetalle() {
 
   const handleSave = async () => {
     setSaving(true);
-    saveMutation.mutate(formData);
-    setSaving(false);
+    try {
+      const payload = {
+        nombre: formData.nombre,
+        rol: formData.rol,
+        departamento: formData.departamento,
+        contacto: formData.contacto
+      };
+
+      const savedStakeholder = await saveMutation.mutateAsync(payload);
+      const savedStakeholderId = isEditing ? stakeholderId : savedStakeholder?.id;
+
+      if (savedStakeholderId) {
+        const funcionAnterior = funciones.find((funcion) => funcion.responsableId === savedStakeholderId);
+
+        if (funcionAnterior && funcionAnterior.id !== formData.funcionId) {
+          await entities.Funcion.update(funcionAnterior.id, { ...funcionAnterior, responsableId: "" });
+        }
+
+        if (formData.funcionId) {
+          const funcionSeleccionada = funciones.find((funcion) => funcion.id === formData.funcionId);
+          if (funcionSeleccionada) {
+            await entities.Funcion.update(funcionSeleccionada.id, {
+              ...funcionSeleccionada,
+              responsableId: savedStakeholderId
+            });
+          }
+        }
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['funciones'] });
+      navigate(createPageUrl("StakeholdersListado"));
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -101,11 +138,24 @@ export default function StakeholderDetalle() {
 
               <div className="space-y-2">
                 <Label htmlFor="rol">Rol *</Label>
-                <Input 
-                  placeholder="Ej: Product Owner, Analista de Negocio"
-                  value={formData.rol}
-                  onChange={(e) => handleInputChange("rol", e.target.value)}
-                />
+                <Select value={formData.rol} onValueChange={(v) => handleInputChange("rol", v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar un rol" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {roles.length === 0 ? (
+                      <SelectItem value="__empty" disabled>
+                        No hay roles disponibles
+                      </SelectItem>
+                    ) : (
+                      roles.map((role) => (
+                        <SelectItem key={role.id} value={role.nombre}>
+                          {role.nombre}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="space-y-2">
@@ -128,41 +178,29 @@ export default function StakeholderDetalle() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="prioridad">Prioridad</Label>
-                <Select value={formData.prioridad} onValueChange={(v) => handleInputChange("prioridad", v)}>
+                <Label htmlFor="funcionId">Función</Label>
+                <Select
+                  value={formData.funcionId || "__none"}
+                  onValueChange={(v) => handleInputChange("funcionId", v === "__none" ? "" : v)}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar" />
+                    <SelectValue placeholder="Seleccionar una función" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="alta">Alta</SelectItem>
-                    <SelectItem value="media">Media</SelectItem>
-                    <SelectItem value="baja">Baja</SelectItem>
+                    <SelectItem value="__none">Sin función</SelectItem>
+                    {funciones.length === 0 ? (
+                      <SelectItem value="__empty" disabled>
+                        No hay funciones disponibles
+                      </SelectItem>
+                    ) : (
+                      funciones.map((funcion) => (
+                        <SelectItem key={funcion.id} value={funcion.id}>
+                          {funcion.nombre}
+                        </SelectItem>
+                      ))
+                    )}
                   </SelectContent>
                 </Select>
-              </div>
-            </div>
-          </FormCard>
-
-          <FormCard title="Análisis del stakeholder" description="Expectativas e influencia en el proyecto">
-            <div className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="expectativas">Expectativas</Label>
-                <Textarea 
-                  placeholder="Describa las expectativas del stakeholder respecto al proyecto..."
-                  value={formData.expectativas}
-                  onChange={(e) => handleInputChange("expectativas", e.target.value)}
-                  className="min-h-[100px]"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="influencia">Influencia</Label>
-                <Textarea 
-                  placeholder="Describa el nivel de influencia y poder de decisión del stakeholder..."
-                  value={formData.influencia}
-                  onChange={(e) => handleInputChange("influencia", e.target.value)}
-                  className="min-h-[100px]"
-                />
               </div>
             </div>
           </FormCard>

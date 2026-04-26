@@ -29,12 +29,15 @@ const createEntityAPI = (entityName) => ({
 export const entities = {
   Stakeholder: createEntityAPI('Stakeholder'),
   Funcion: createEntityAPI('Funcion'),
+  Modulo: createEntityAPI('Modulo'),
   HistoriaUsuario: createEntityAPI('HistoriaUsuario'),
   AnalisisDocumento: createEntityAPI('AnalisisDocumento'),
   Encuesta: createEntityAPI('Encuesta'),
   Entrevista: createEntityAPI('Entrevista'),
   FocusGroup: createEntityAPI('FocusGroup'),
-  SeguimientoTransaccional: createEntityAPI('SeguimientoTransaccional')
+  SeguimientoTransaccional: createEntityAPI('SeguimientoTransaccional'),
+  Role: createEntityAPI('Role'),
+  Diagrama: createEntityAPI('Diagrama')
 };
 
 // Export a mock auth object for compatibility

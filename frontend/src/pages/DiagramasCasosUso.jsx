@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Users, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { entities } from "@/api/entities";
 import PageHeader from "@/components/shared/PageHeader";
 import UseCaseDiagramTable from "@/components/diagramas/casosUso/UseCaseDiagramTable";
 import DiagramCreateEditModal from "@/components/diagramas/DiagramCreateEditModal";
@@ -40,21 +41,34 @@ export default function DiagramasCasosUso() {
     setShowModal(true);
   };
 
-  const handleSaveModal = (formData) => {
+  const handleSaveModal = async (formData) => {
     if (modalTarget) {
+      const updatedDiagram = {
+        ...modalTarget,
+        ...formData,
+        updatedAt: new Date().toISOString(),
+      };
       // Edit existing
       setDiagrams(prev =>
         prev.map(d =>
           d.id === modalTarget.id
-            ? { ...d, ...formData, updatedAt: new Date().toISOString() }
+            ? updatedDiagram
             : d
         )
       );
+      await entities.Diagrama.update(modalTarget.id, {
+        id: modalTarget.id,
+        tipo: "usecase",
+        nombre: updatedDiagram.name,
+        descripcion: updatedDiagram.description || "",
+        funcionId: updatedDiagram.funcionId || ""
+      });
       setShowModal(false);
     } else {
       // Create new
+      const diagramId = `uc-${Date.now()}`;
       const newDiagram = {
-        id: `uc-${Date.now()}`,
+        id: diagramId,
         ...formData,
         actors: [
           { id: "a1", type: "actor", name: "Actor 1", description: "", x: 50, y: 150 },
@@ -69,6 +83,13 @@ export default function DiagramasCasosUso() {
         updatedAt: new Date().toISOString(),
       };
       setDiagrams(prev => [...prev, newDiagram]);
+      await entities.Diagrama.create({
+        id: diagramId,
+        tipo: "usecase",
+        nombre: newDiagram.name,
+        descripcion: newDiagram.description || "",
+        funcionId: newDiagram.funcionId || ""
+      });
       // Navegar automáticamente al nuevo diagrama
       setTimeout(() => {
         navigate(`/diagrama-casos-uso-editor/${newDiagram.id}`);
@@ -89,6 +110,7 @@ export default function DiagramasCasosUso() {
   const handleDelete = (diagramId) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este diagrama?")) {
       setDiagrams(prev => prev.filter(d => d.id !== diagramId));
+      void entities.Diagrama.delete(diagramId);
     }
   };
 

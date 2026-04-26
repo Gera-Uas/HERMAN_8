@@ -78,12 +78,12 @@ export default function SeguimientoTransaccionalDetalle() {
   useEffect(() => {
     if (seguimiento) {
       setFormData({
-        sistema: seguimiento.sistema || "",
-        tipoTransaccion: seguimiento.tipoTransaccion || "",
+        sistema: seguimiento.sistema || seguimiento.titulo || "",
+        tipoTransaccion: seguimiento.tipoTransaccion || seguimiento.transacciones || "",
         periodoInicio: seguimiento.periodoInicio || "",
         periodoFin: seguimiento.periodoFin || "",
         fuenteDatos: seguimiento.fuenteDatos || "",
-        objetivo: seguimiento.objetivo || "",
+        objetivo: seguimiento.objetivo || seguimiento.descripcion || "",
         stakeholderIds: seguimiento.stakeholderIds || [],
         funcionIds: seguimiento.funcionIds || []
       });
@@ -123,6 +123,12 @@ export default function SeguimientoTransaccionalDetalle() {
     setSaving(true);
     const dataToSave = {
       ...formData,
+      titulo: formData.sistema || "Seguimiento transaccional",
+      descripcion: formData.objetivo || "",
+      transacciones: formData.tipoTransaccion || "",
+      actores: formData.stakeholderIds?.join(",") || "",
+      flujo: conclusiones.patrones || "",
+      excepciones: conclusiones.cuellos || "",
       ...conclusiones
     };
     saveMutation.mutate(dataToSave);

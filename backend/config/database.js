@@ -33,6 +33,18 @@ export function initializeDatabase() {
     )
   `);
 
+  // Role table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS roles (
+      id TEXT PRIMARY KEY,
+      nombre TEXT NOT NULL UNIQUE,
+      descripcion TEXT,
+      nivel TEXT,
+      fechaCreacion TEXT DEFAULT CURRENT_TIMESTAMP,
+      fechaActualizacion TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
+
   // Funcion table
   db.exec(`
     CREATE TABLE IF NOT EXISTS funciones (
@@ -42,6 +54,22 @@ export function initializeDatabase() {
       prioridad TEXT,
       estado TEXT,
       responsableId TEXT,
+      fechaCreacion TEXT DEFAULT CURRENT_TIMESTAMP,
+      fechaActualizacion TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (responsableId) REFERENCES stakeholders(id) ON DELETE SET NULL
+    )
+  `);
+
+  // Modulo table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS modulos (
+      id TEXT PRIMARY KEY,
+      nombre TEXT NOT NULL,
+      descripcion TEXT,
+      version TEXT,
+      estado TEXT,
+      responsableId TEXT,
+      funcionalidades TEXT,
       fechaCreacion TEXT DEFAULT CURRENT_TIMESTAMP,
       fechaActualizacion TEXT DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (responsableId) REFERENCES stakeholders(id) ON DELETE SET NULL
@@ -147,6 +175,20 @@ export function initializeDatabase() {
     )
   `);
 
+  // Diagramas table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS diagramas (
+      id TEXT PRIMARY KEY,
+      tipo TEXT NOT NULL,
+      nombre TEXT NOT NULL,
+      descripcion TEXT,
+      funcionId TEXT,
+      fechaCreacion TEXT DEFAULT CURRENT_TIMESTAMP,
+      fechaActualizacion TEXT DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (funcionId) REFERENCES funciones(id) ON DELETE SET NULL
+    )
+  `);
+
   // Junction table for AnalisisDocumento-Stakeholder
   db.exec(`
     CREATE TABLE IF NOT EXISTS analisis_documento_stakeholders (
@@ -179,6 +221,27 @@ export function initializeDatabase() {
       createdAt TEXT DEFAULT CURRENT_TIMESTAMP
     )
   `);
+
+  const roleCount = db.prepare('SELECT COUNT(*) as count FROM roles').get().count;
+  if (roleCount === 0) {
+    const now = new Date().toISOString();
+    const insertRole = db.prepare(`
+      INSERT INTO roles (id, nombre, descripcion, nivel, fechaCreacion, fechaActualizacion)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `);
+
+    [
+      ['role-sponsor', 'Sponsor', 'Patrocinador ejecutivo del proyecto', 'estrategico'],
+      ['role-po', 'Product Owner', 'Define y prioriza el valor del producto', 'tactico'],
+      ['role-ba', 'Analista de negocio', 'Modela requerimientos y procesos', 'tactico'],
+      ['role-tl', 'Lider tecnico', 'Supervisa la arquitectura y decisiones tecnicas', 'tactico'],
+      ['role-dev', 'Desarrollador', 'Implementa la solución y sus componentes', 'operativo'],
+      ['role-qa', 'Tester', 'Valida la calidad y pruebas del sistema', 'operativo'],
+      ['role-user', 'Usuario final', 'Consume y evalua la solución entregada', 'operativo']
+    ].forEach(([id, nombre, descripcion, nivel]) => {
+      insertRole.run(id, nombre, descripcion, nivel, now, now);
+    });
+  }
 
   console.log('✓ Database initialized');
 }

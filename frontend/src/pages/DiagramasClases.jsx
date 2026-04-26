@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { LayoutGrid } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { entities } from "@/api/entities";
 import PageHeader from "@/components/shared/PageHeader";
 import ClassDiagramTable from "@/components/diagramas/clases/ClassDiagramTable";
 import DiagramCreateEditModal from "@/components/diagramas/DiagramCreateEditModal";
@@ -40,21 +41,34 @@ export default function DiagramasClases() {
     setShowModal(true);
   };
 
-  const handleSaveModal = (formData) => {
+  const handleSaveModal = async (formData) => {
     if (modalTarget) {
+      const updatedDiagram = {
+        ...modalTarget,
+        ...formData,
+        updatedAt: new Date().toISOString(),
+      };
       // Edit existing
       setDiagrams(prev =>
         prev.map(d =>
           d.id === modalTarget.id
-            ? { ...d, ...formData, updatedAt: new Date().toISOString() }
+            ? updatedDiagram
             : d
         )
       );
+      await entities.Diagrama.update(modalTarget.id, {
+        id: modalTarget.id,
+        tipo: "class",
+        nombre: updatedDiagram.name,
+        descripcion: updatedDiagram.description || "",
+        funcionId: updatedDiagram.funcionId || ""
+      });
       setShowModal(false);
     } else {
       // Create new
+      const diagramId = `class-${Date.now()}`;
       const newDiagram = {
-        id: `class-${Date.now()}`,
+        id: diagramId,
         ...formData,
         classes: [
           {
@@ -76,6 +90,13 @@ export default function DiagramasClases() {
         updatedAt: new Date().toISOString(),
       };
       setDiagrams(prev => [...prev, newDiagram]);
+      await entities.Diagrama.create({
+        id: diagramId,
+        tipo: "class",
+        nombre: newDiagram.name,
+        descripcion: newDiagram.description || "",
+        funcionId: newDiagram.funcionId || ""
+      });
       // Navegar automáticamente al nuevo diagrama
       setTimeout(() => {
         navigate(`/diagrama-clases-editor/${newDiagram.id}`);
@@ -96,6 +117,7 @@ export default function DiagramasClases() {
   const handleDelete = (diagramId) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este diagrama?")) {
       setDiagrams(prev => prev.filter(d => d.id !== diagramId));
+      void entities.Diagrama.delete(diagramId);
     }
   };
 

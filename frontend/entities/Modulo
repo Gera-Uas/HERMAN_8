@@ -1,0 +1,35 @@
+{
+  "name": "Modulo",
+  "type": "object",
+  "properties": {
+    "nombre": {
+      "type": "string"
+    },
+    "descripcion": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "estado": {
+      "type": "string",
+      "enum": [
+        "planificacion",
+        "desarrollo",
+        "pruebas",
+        "produccion",
+        "mantenimiento"
+      ],
+      "default": "planificacion"
+    },
+    "responsableId": {
+      "type": "string"
+    },
+    "funcionalidades": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "nombre"
+  ]
+}

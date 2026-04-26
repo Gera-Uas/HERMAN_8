@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { X, Save } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { entities } from "@/api/entities";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function DiagramCreateEditModal({ type, diagram, onSave, onClose }) {
   const [form, setForm] = useState({
     name: "",
     description: "",
+    funcionId: "",
+  });
+
+  const { data: funciones = [] } = useQuery({
+    queryKey: ["funciones"],
+    queryFn: () => entities.Funcion.list()
   });
 
   useEffect(() => {
@@ -16,9 +25,10 @@ export default function DiagramCreateEditModal({ type, diagram, onSave, onClose 
       setForm({
         name: diagram.name || "",
         description: diagram.description || "",
+        funcionId: diagram.funcionId || "",
       });
     } else {
-      setForm({ name: "", description: "" });
+      setForm({ name: "", description: "", funcionId: "" });
     }
   }, [diagram]);
 
@@ -66,6 +76,25 @@ export default function DiagramCreateEditModal({ type, diagram, onSave, onClose 
               placeholder="Describe el propósito de este diagrama..."
               className="min-h-[80px]"
             />
+          </div>
+          <div className="space-y-1.5">
+            <Label>Función vinculada</Label>
+            <Select value={form.funcionId} onValueChange={(value) => setForm((p) => ({ ...p, funcionId: value }))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Selecciona una función" />
+              </SelectTrigger>
+              <SelectContent>
+                {funciones.length === 0 ? (
+                  <div className="p-2 text-sm text-slate-500">No hay funciones registradas</div>
+                ) : (
+                  funciones.map((funcion) => (
+                    <SelectItem key={funcion.id} value={funcion.id}>
+                      {funcion.nombre}
+                    </SelectItem>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
           </div>
         </div>
 

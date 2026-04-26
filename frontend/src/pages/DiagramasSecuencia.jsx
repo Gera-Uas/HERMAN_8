@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { GitBranch, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { entities } from "@/api/entities";
 import PageHeader from "@/components/shared/PageHeader";
 import SequenceDiagramTable from "@/components/diagramas/secuencia/SequenceDiagramTable";
 import DiagramCreateEditModal from "@/components/diagramas/DiagramCreateEditModal";
@@ -40,20 +41,33 @@ export default function DiagramasSecuencia() {
     setShowModal(true);
   };
 
-  const handleSaveModal = (formData) => {
+  const handleSaveModal = async (formData) => {
     if (modalTarget) {
+      const updatedDiagram = {
+        ...modalTarget,
+        ...formData,
+        updatedAt: new Date().toISOString(),
+      };
       // Edit existing
       setDiagrams(prev =>
         prev.map(d =>
           d.id === modalTarget.id
-            ? { ...d, ...formData, updatedAt: new Date().toISOString() }
+            ? updatedDiagram
             : d
         )
       );
+      await entities.Diagrama.update(modalTarget.id, {
+        id: modalTarget.id,
+        tipo: "sequence",
+        nombre: updatedDiagram.name,
+        descripcion: updatedDiagram.description || "",
+        funcionId: updatedDiagram.funcionId || ""
+      });
     } else {
       // Create new
+      const diagramId = `seq-${Date.now()}`;
       const newDiagram = {
-        id: `seq-${Date.now()}`,
+        id: diagramId,
         ...formData,
         actors: [
           { id: "a1", name: "Actor 1", type: "actor", x: 100 },
@@ -67,6 +81,13 @@ export default function DiagramasSecuencia() {
         updatedAt: new Date().toISOString(),
       };
       setDiagrams(prev => [...prev, newDiagram]);
+      await entities.Diagrama.create({
+        id: diagramId,
+        tipo: "sequence",
+        nombre: newDiagram.name,
+        descripcion: newDiagram.description || "",
+        funcionId: newDiagram.funcionId || ""
+      });
       // Navegar automáticamente al nuevo diagrama
       setTimeout(() => {
         navigate(`/diagrama-secuencia-editor/${newDiagram.id}`);
@@ -88,6 +109,7 @@ export default function DiagramasSecuencia() {
   const handleDelete = (diagramId) => {
     if (window.confirm("¿Estás seguro de que deseas eliminar este diagrama?")) {
       setDiagrams(prev => prev.filter(d => d.id !== diagramId));
+      void entities.Diagrama.delete(diagramId);
     }
   };
 

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "./utils";
 import { useProjects } from "@/lib/ProjectContext";
-import { useAuth } from "@/lib/AuthContext";
 import {
   ChevronDown,
   ChevronRight,
@@ -26,7 +25,7 @@ import {
   Package,
   LayoutGrid,
   Menu,
-  LogOut
+  X
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -35,6 +34,22 @@ const navigationItems = [
     name: "Dashboard",
     icon: LayoutDashboard,
     page: "Home"
+  },
+  {
+    name: "Gestión del Proyecto",
+    icon: Settings,
+    children: [
+      { name: "Módulos", icon: Package, page: "ModulosListado" },
+      { name: "Funciones", icon: Cog, page: "FuncionesListado" },
+      {
+        name: "Stakeholders",
+        icon: UserCog,
+        children: [
+          { name: "Catálogo de stakeholders", icon: UserCog, page: "StakeholdersListado" },
+          { name: "Roles", icon: Cog, page: "RolesListado" }
+        ]
+      }
+    ]
   },
   {
     name: "Recolección de datos",
@@ -49,19 +64,6 @@ const navigationItems = [
     ]
   },
   {
-    name: "Gestión del Proyecto",
-    icon: Settings,
-    children: [
-      { name: "Stakeholders", icon: UserCog, page: "StakeholdersListado" },
-      { name: "Funciones", icon: Cog, page: "FuncionesListado" }
-    ]
-  },
-  {
-    name: "Requerimientos",
-    icon: FileText,
-    page: "Requerimientos"
-  },
-  {
     name: "Diagramas",
     icon: Layers,
     children: [
@@ -70,6 +72,11 @@ const navigationItems = [
       { name: "Paquetes", icon: Package, page: "DiagramasPaquetes" },
       { name: "Clases", icon: LayoutGrid, page: "DiagramasClases" }
     ]
+  },
+  {
+    name: "Requerimientos",
+    icon: FileText,
+    page: "Requerimientos"
   },
   {
     name: "Desarrollo",
@@ -92,12 +99,8 @@ export default function Layout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { currentProject } = useProjects();
-  const { logout, user } = useAuth();
   const [expandedItems, setExpandedItems] = useState([]);
   const [isSidebarMinimized, setIsSidebarMinimized] = useState(false);
-
-  // Hide sidebar on ProjectsList page
-  const isProjectsListPage = location.pathname === '/ProjectsList';
 
   const toggleSidebar = () => {
     setIsSidebarMinimized(!isSidebarMinimized);
@@ -116,14 +119,62 @@ export default function Layout({ children }) {
     return currentPath === createPageUrl(page);
   };
 
+  const renderNavItem = (item) => {
+    if (item.children?.length) {
+      const isExpanded = expandedItems.includes(item.name);
+
+      return (
+        <div key={item.name}>
+          <button
+            onClick={() => toggleExpand(item.name)}
+            className={cn(
+              "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
+              isExpanded
+                ? "bg-slate-700/50 text-white"
+                : "text-slate-300 hover:bg-slate-700/30 hover:text-white"
+            )}
+            title={isSidebarMinimized ? item.name : ""}
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              <item.icon className="w-5 h-5 flex-shrink-0" />
+              {!isSidebarMinimized && <span className="truncate">{item.name}</span>}
+            </div>
+            {!isSidebarMinimized && (isExpanded ? <ChevronDown className="w-4 h-4 flex-shrink-0" /> : <ChevronRight className="w-4 h-4 flex-shrink-0" />)}
+          </button>
+
+          {!isSidebarMinimized && isExpanded && (
+            <div className="mt-1 ml-4 pl-4 border-l border-slate-700/50 space-y-1">
+              {item.children.map((child) => renderNavItem(child))}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <Link
+        key={item.name}
+        to={createPageUrl(item.page)}
+        className={cn(
+          "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all duration-200",
+          isActive(item.page)
+            ? "bg-indigo-500/20 text-indigo-400 font-medium"
+            : "text-slate-400 hover:bg-slate-700/30 hover:text-white"
+        )}
+      >
+        <item.icon className="w-4 h-4 flex-shrink-0" />
+        <span>{item.name}</span>
+      </Link>
+    );
+  };
+
   return (
-    <div className="h-screen bg-slate-50 flex overflow-hidden">
+    <div className="min-h-screen bg-slate-50 flex">
       {/* Sidebar */}
-      {!isProjectsListPage && (
-        <aside className={cn(
-          "bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 fixed h-full flex flex-col transition-all duration-300 ease-in-out z-50",
-          isSidebarMinimized ? "w-20" : "w-72"
-        )}>
+      <aside className={cn(
+        "bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900 fixed h-full flex flex-col transition-all duration-300 ease-in-out z-50",
+        isSidebarMinimized ? "w-20" : "w-72"
+      )}>
         {/* Logo/Header */}
         <button
           onClick={toggleSidebar}
@@ -150,79 +201,12 @@ export default function Layout({ children }) {
 
         {/* Navigation */}
         <nav className="p-4 space-y-1 flex-1 overflow-y-auto min-h-0 scrollbar-hidden-until-scroll">
-          {navigationItems.map((item) => (
-            <div key={item.name}>
-              {item.children ? (
-                <>
-                  <button
-                    onClick={() => toggleExpand(item.name)}
-                    className={cn(
-                      "w-full flex items-center justify-between px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
-                      expandedItems.includes(item.name)
-                        ? "bg-slate-700/50 text-white"
-                        : "text-slate-300 hover:bg-slate-700/30 hover:text-white"
-                    )}
-                    title={isSidebarMinimized ? item.name : ""}
-                  >
-                    <div className="flex items-center gap-3 min-w-0">
-                      <item.icon className="w-5 h-5 flex-shrink-0" />
-                      {!isSidebarMinimized && (
-                        <span className="truncate">{item.name}</span>
-                      )}
-                    </div>
-                    {!isSidebarMinimized && (
-                      expandedItems.includes(item.name) ? (
-                        <ChevronDown className="w-4 h-4 flex-shrink-0" />
-                      ) : (
-                        <ChevronRight className="w-4 h-4 flex-shrink-0" />
-                      )
-                    )}
-                  </button>
-                  
-                  {!isSidebarMinimized && expandedItems.includes(item.name) && (
-                    <div className="mt-1 ml-4 pl-4 border-l border-slate-700/50 space-y-1">
-                      {item.children.map((child) => (
-                        <Link
-                          key={child.name}
-                          to={createPageUrl(child.page)}
-                          className={cn(
-                            "flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition-all duration-200",
-                            isActive(child.page)
-                              ? "bg-indigo-500/20 text-indigo-400 font-medium"
-                              : "text-slate-400 hover:bg-slate-700/30 hover:text-white"
-                          )}
-                        >
-                          <child.icon className="w-4 h-4" />
-                          <span>{child.name}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </>
-              ) : (
-                <Link
-                  to={createPageUrl(item.page)}
-                  className={cn(
-                    "flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition-all duration-200",
-                    isActive(item.page)
-                      ? "bg-indigo-500/20 text-indigo-400"
-                      : "text-slate-300 hover:bg-slate-700/30 hover:text-white"
-                  )}
-                  title={isSidebarMinimized ? item.name : ""}
-                >
-                  <item.icon className="w-5 h-5 flex-shrink-0" />
-                  {!isSidebarMinimized && (
-                    <span className="truncate">{item.name}</span>
-                  )}
-                </Link>
-              )}
-            </div>
-          ))}
+          {navigationItems.map((item) => renderNavItem(item))}
         </nav>
 
         {/* Footer */}
         {!isSidebarMinimized && (
-          <div className="p-4 border-t border-slate-700/50 shrink-0 space-y-3">
+          <div className="p-4 border-t border-slate-700/50 shrink-0">
             <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-slate-800/50">
               <div className="w-8 h-8 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-lg flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
                 {currentProject?.name?.charAt(0).toUpperCase() || 'P'}
@@ -241,26 +225,14 @@ export default function Layout({ children }) {
                 </span>
               </button>
             </div>
-
-            {/* Logout Button */}
-            <button
-              onClick={() => logout(true)}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-slate-300 hover:bg-red-500/20 hover:text-red-300 transition-all duration-200 group"
-              title="Cerrar sesión"
-            >
-              <LogOut className="w-5 h-5 flex-shrink-0" />
-              <span>Cerrar sesión</span>
-              <span className="text-xs text-slate-500 ml-auto">{user?.email}</span>
-            </button>
           </div>
         )}
-        </aside>
-      )}
+      </aside>
 
       {/* Main Content */}
       <main className={cn(
-        "flex-1 transition-all duration-300 ease-in-out overflow-hidden",
-        isProjectsListPage ? "ml-0" : (isSidebarMinimized ? "ml-20" : "ml-72")
+        "flex-1 transition-all duration-300 ease-in-out min-h-screen",
+        isSidebarMinimized ? "ml-20" : "ml-72"
       )}>
         {children}
       </main>

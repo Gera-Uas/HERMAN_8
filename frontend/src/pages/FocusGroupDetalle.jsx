@@ -65,8 +65,8 @@ export default function FocusGroupDetalle() {
   useEffect(() => {
     if (focusGroup) {
       setFormData({
-        tema: focusGroup.tema || "",
-        objetivo: focusGroup.objetivo || "",
+        tema: focusGroup.tema || focusGroup.titulo || "",
+        objetivo: focusGroup.objetivo || focusGroup.descripcion || "",
         fecha: focusGroup.fecha || "",
         horaInicio: focusGroup.horaInicio || "",
         horaFin: focusGroup.horaFin || "",
@@ -111,6 +111,11 @@ export default function FocusGroupDetalle() {
     setSaving(true);
     const dataToSave = {
       ...formData,
+      titulo: formData.tema || "Focus Group",
+      descripcion: formData.objetivo || "",
+      temas: formData.tema || "",
+      resultados: conclusiones.hallazgos || conclusiones.resumenDiscusiones || "",
+      notas: conclusiones.puntosConflicto || "",
       transcripcion,
       ...conclusiones
     };
